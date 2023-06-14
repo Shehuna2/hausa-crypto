@@ -1,0 +1,211 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<body>
+    <div class="backdrop"></div>
+    <a class="backtop fas fa-arrow-up" href="#"></a>
+
+    <section class="inner-section single-banner" style="background: url(images/blog/ond.jfif) no-repeat center;">
+        <div class="container">
+            <h2>Hausa Crypto</h2>
+        </div>
+    </section>
+
+    <div class="container">
+        {% if request.GET.q is not null %}
+        <h3>Labarai da suka shafi #{{ request.GET.q }}</h3>
+        {% endif %}
+
+        {% if selected_category %}
+        <h3>Labarai da suka shafi #{{ selected_category }}</h3>
+        {% endif %}
+    </div>
+
+    <section class="inner-section blog-grid">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="top-filter">
+                                <div class="filter-show">
+                                    {% if posts.has_other_pages %}
+                                    <label class="filter-label">shafi na: {{ posts.start_index }} acikin shafuka </label>
+                                    <select class="form-select filter-select">
+                                        <option><a href="">{{ posts.paginator.count }}</a></option>
+                                    </select>
+                                    {% endif %}
+                                </div>
+                                <div class="filter-short">
+                                    <label class="filter-label">Sort by: {{ sort_option|capfirst }}</label>
+                                    <select class="form-select filter-select" onchange="location = this.value;">
+                                        <option value="{% url 'core:home-index' %}?sort=default" {% if sort_option == 'default' %}selected{% endif %}>Gida</option>
+                                        <option value="{% url 'core:home-index' %}?sort=recent" {% if sort_option == 'recent' %}selected{% endif %}>Sabbin shirye-shirye</option>
+                                        <option value="{% url 'core:home-index' %}?sort=recommend" {% if sort_option == 'recommend' %}selected{% endif %}>Masu Muhimmanci</option>
+                                    </select>
+                                </div>
+                                <div class="filter-action">
+                                    <a href="{% url 'core:home-index' %}" class="active" title="Two Column"><i class="fas fa-th-large"></i></a>
+                                    <a href="/" title="One Column"><i class="fas fa-th-list"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        {% for post in posts %}
+                        <div class="col-md-6 col-lg-6">
+                            <div class="blog-card">
+                                <div class="blog-media"><a class="blog-img" href="{{ post.get_absolute_url }}">
+                                    <img src="{{ post.image.url }}" alt="blog"></a>
+                                </div>
+                                <div class="blog-content">
+                                    <ul class="blog-meta">
+                                        <li><i class="fas fa-user"></i><span>{{ post.author }}</span></li>
+                                        <li><i class="fas fa-calendar-alt"></i><span>{{ post.publish.date }}</span></li>
+                                    </ul>
+                                    <h4 class="blog-title"><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h4>
+                                    <p class="blog-desc">{{ post.body|safe|striptags|truncatechars:100 }}</p>
+                                    <a class="blog-btn transparent" href="{{ post.get_absolute_url }}"><span>Cigaba...</span><i class="icofont-arrow-right"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="row">
+                        {% if posts.has_other_pages %}
+                            <div class="col-lg-12">
+                                <div class="bottom-paginate">
+                                    <p class="page-info">Shafi na {{ posts.start_index }} acikin shafuka {{ posts.paginator.count }}</p>
+                                    <ul class="pagination">
+                                        {% if posts.has_previous %}
+                                            <li class="page-item">
+                                                <a class="page-link" href="?page={{ posts.previous_page_number }}"><i class="fas fa-long-arrow-alt-left"></i></a>
+                                            </li>
+                                        {% endif %}
+                    
+                                        {% for i in posts.paginator.page_range %}
+                                            {% if i == posts.number %}
+                                                <li class="page-item active"><span class="page-link">{{ i }}</span></li>
+                                            {% elif i > posts.number|add:-1 and i < posts.number|add:2 %}
+                                                <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                                            {% elif forloop.counter == posts.number|add:2 and i < posts.paginator.num_pages %}
+                                                <li class="page-item disabled"><span class="page-link">...</span></li>
+                                            {% elif i == posts.paginator.num_pages %}
+                                                <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                                            {% endif %}
+                                        {% endfor %}
+                    
+                                        {% if posts.has_next %}
+                                            <li class="page-item">
+                                                <a class="page-link" href="?page={{ posts.next_page_number }}"><i class="fas fa-long-arrow-alt-right"></i></a>
+                                            </li>
+                                        {% endif %}
+                                    </ul>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    
+                    
+                    
+                    
+                </div>
+
+                <div class="col-md-7 col-lg-4">
+                    <div class="blog-widget">
+                        <h3 class="blog-widget-title">Binciko labarai</h3>
+                        <form class="blog-widget-form" action="/">
+                            <input type="search" value="{{ request.GET.get }}" name="q" placeholder="Binciko labari">
+                            <button class="icofont-search-1"></button>
+                        </form>
+                    </div>
+
+                    <div class="blog-widget">
+                        <h3 class="blog-widget-title">Shahararrun Labarai</h3>
+                        <ul class="blog-widget-feed">
+                            {% for post in popular_posts %}
+                            <li>
+                                <a class="blog-widget-media" href="{{ post.get_absolute_url }}">
+                                    <img src="{{ post.image.url }}" alt="blog-widget">
+                                </a>
+                                <h6 class="blog-widget-text">
+                                    <a href="{{ post.get_absolute_url }}">{{ post.title }}</a>
+                                </h6>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+
+                    <div class="blog-widget">
+                        <h3 class="blog-widget-title">Sassan labarai</h3>
+                        <ul class="blog-widget-category">
+                            {% for category in categories %}
+                            {% if category.post_count > 0 %}
+                            <li>
+                                <a href="{% url 'core:post_category' category.slug %}">
+                                    {{ category.name }}
+                                    <span>{{ category.post_count }}</span>
+                                </a>
+                            </li>
+                            {% endif %}
+                            {% endfor %}
+                        </ul>
+                    </div>
+
+                    <div class="blog-widget">
+                        <h3 class="blog-widget-title">labarai masu dangantaka</h3>
+                        <ul class="blog-widget-tag">
+                            {% for post in posts %}
+                            {% for tag in post.tag.all %}
+                            <li>#{{ tag.name }}</li>
+                            {% endfor %}
+                            {% endfor %}
+                        </ul>
+                    </div>
+
+                    <div class="blog-widget">
+                        <h3 class="blog-widget-title">ku biyo mu a shafukan mu</h3>
+                        <ul class="blog-widget-social">
+                            <li><a href="#" class="icofont-facebook"></a></li>
+                            <li><a href="https://twitter.com/Hausa_Crytpo?t=pb8kD9EM3EJYPBn3G7cR-g&s=09" class="icofont-twitter"></a></li>
+                            <li><a href="#" class="icofont-instagram"></a></li>
+                        </ul>
+                    </div>
+
+                    <div class="blog-widget">
+                        <a href="#">
+                            <img class="img-fluid" src="{% static 'images/promo/blog/01.jpg' %}" alt="promo">
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="news-part" style="background: url(images/newsletter.jpg) no-repeat center;">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-5 col-lg-6 col-xl-7">
+                    <div class="news-text">
+                        <h2>Domin samu labaranmu kai tsaye</h2>
+                    </div>
+                </div>
+                <div class="col-md-7 col-lg-6 col-xl-5">
+                    <form class="news-form">
+                        <input type="text" placeholder="Shigar da adireshin ka na email">
+                        <button>
+                            <span><i class="icofont-ui-email"></i>Shiga</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+{% endblock content %}
+</body>
+</html>
