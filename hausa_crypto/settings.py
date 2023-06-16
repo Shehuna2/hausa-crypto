@@ -20,10 +20,10 @@ USE_L1ON = True
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", get_random_secret_key())
 
 # SECURITY WARNING: don't run with debug turned on in production!
-# DEBUG = True
-DEBUG = os.getenv("DEBUG", "False") == "True"
-# DEVELOPMENT_MODE = True
-DEVELOPMENT_MODE = os.getenv("DEVELOPMENT_MODE", "False") == "True"
+DEBUG = False
+# DEBUG = os.getenv("DEBUG", "False") == "True"
+DEVELOPMENT_MODE = False
+# DEVELOPMENT_MODE = os.getenv("DEVELOPMENT_MODE", "False") == "True"
 
 ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
 
@@ -148,6 +148,7 @@ STATICFILES_DIRS = [
     BASE_DIR / 'static'
 ]
 MEDIA_ROOT = BASE_DIR / 'static/images'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 CKEDITOR_UPLOAD_PATH = "uploads/"
 # STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 # Default primary key field type
